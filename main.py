@@ -52,7 +52,6 @@ def results():
 
     par = {'text': vacancy, 'area': area}
     rv = requests.get(URL_VACANCIES, params=par)
-    print(rv.status_code)
     if rv.status_code == 200:
         result = rv.json()
         found = result['found']
@@ -64,7 +63,6 @@ def results():
                 res = requests.get(URL_VACANCIES, params=params).json()
                 # страница {p}
                 for j in res['items']:
-                    print(' ', end='.')
                     resj = requests.get(j['url']).json()
                     for i in resj['key_skills']:
                         if i['name'] in skills:
