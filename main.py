@@ -28,6 +28,7 @@ def search():
 
 @app.route('/search/', methods=['POST'])
 def results():
+    # TODO : нужен прогресс-бар
     req = []
     skills = {}
     total = 0
@@ -38,6 +39,7 @@ def results():
         vacancy = 'python developer'  # по умолчанию ищем python developer
     region = request.form['region']
     info = {'region': region, 'vacancy': vacancy}  # передаем в html
+
     # находим код региона для последущего запроса
     params = {'text': f'{region}'}
     ra = requests.get(URL_AREA, params=params)
