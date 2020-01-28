@@ -91,7 +91,7 @@ def results():
 
 @app.route('/result/')
 def get_results():
-    # TODO : обработка пустого файла json
+    # TODO : обработка пустого или отсутствующего файла json
     with open('last_call.json', 'r', encoding='utf-8') as f:
         info = json.load(f)
     return render_template('result.html', info=info)
