@@ -39,6 +39,7 @@ def results():
         vacancy = 'python developer'  # по умолчанию ищем python developer
     region = request.form['region']
     # TODO заполнить info данными по умолчанию
+    # TODO : необходимо запоминать дату и время на которое сделан запрос, ситуация ао вакансиям может измениться
     info = {'region': region, 'vacancy': vacancy}  # передаем в html
 
     # находим код региона для последущего запроса
@@ -95,6 +96,7 @@ def results():
 @app.route('/result/')
 def get_results():
     # TODO : обработка пустого или отсутствующего файла json
+    # TODO : необходимо запоминать дату и время на которое сделан запрос, ситуация ао вакансиям может измениться
     with open('last_call.json', 'r', encoding='utf-8') as f:
         info = json.load(f)
     return render_template('result.html', info=info)
