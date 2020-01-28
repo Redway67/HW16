@@ -28,7 +28,7 @@ def search():
 
 @app.route('/search/', methods=['POST'])
 def results():
-    # TODO : нужен прогресс-бар
+    # TODO : вынести def results()  в отдельный модуль
     req = []
     skills = {}
     total = 0
@@ -38,9 +38,11 @@ def results():
     if not vacancy:
         vacancy = 'python developer'  # по умолчанию ищем python developer
     region = request.form['region']
+    # TODO заполнить info данными по умолчанию
     info = {'region': region, 'vacancy': vacancy}  # передаем в html
 
     # находим код региона для последущего запроса
+    # TODO Если region = Москва, то запрос не нужен
     params = {'text': f'{region}'}
     ra = requests.get(URL_AREA, params=params)
     if ra.status_code == 200:
@@ -59,6 +61,7 @@ def results():
         found = result['found']
         info['count'] = found
         # идем по страницам и считаем навыки
+        # TODO : нужен прогресс-бар
         if result['items']:
             for p in range(1 + (found // 20)):
                 params = {'text': vacancy, 'area': area, 'page': p}
