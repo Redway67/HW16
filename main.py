@@ -28,7 +28,7 @@ def search():
 
 @app.route('/search/', methods=['POST'])
 def results():
-    # TODO : нужен прогресс-бар
+    # TODO : вынести def results()  в отдельный модуль
     req = []
     skills = {}
     total = 0
@@ -38,9 +38,12 @@ def results():
     if not vacancy:
         vacancy = 'python developer'  # по умолчанию ищем python developer
     region = request.form['region']
+    # TODO заполнить info данными по умолчанию
+    # TODO : необходимо запоминать дату и время на которое сделан запрос, ситуация ао вакансиям может измениться
     info = {'region': region, 'vacancy': vacancy}  # передаем в html
 
     # находим код региона для последущего запроса
+    # TODO Если region = Москва, то запрос не нужен
     params = {'text': f'{region}'}
     ra = requests.get(URL_AREA, params=params)
     if ra.status_code == 200:
@@ -59,6 +62,7 @@ def results():
         found = result['found']
         info['count'] = found
         # идем по страницам и считаем навыки
+        # TODO : нужен прогресс-бар
         if result['items']:
             for p in range(1 + (found // 20)):
                 params = {'text': vacancy, 'area': area, 'page': p}
@@ -91,7 +95,8 @@ def results():
 
 @app.route('/result/')
 def get_results():
-    # TODO : обработка пустого файла json
+    # TODO : обработка пустого или отсутствующего файла json
+    # TODO : необходимо запоминать дату и время на которое сделан запрос, ситуация ао вакансиям может измениться
     with open('last_call.json', 'r', encoding='utf-8') as f:
         info = json.load(f)
     return render_template('result.html', info=info)
