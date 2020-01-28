@@ -1,5 +1,6 @@
 import requests
 import json
+from datetime import datetime
 
 DOMAIN = 'https://api.hh.ru/'
 URL_VACANCIES = f'{DOMAIN}vacancies'
@@ -13,7 +14,8 @@ def parser(vacancy='Python developer', region='Москва'):
     qnt_skills = 0
     # по умолчанию info
     area = '1'  # код Москвы
-    info = {'region': region, 'vacancy': vacancy, 'found': 0, 'requirement': req}  # передаем в html
+    info = {'region': region, 'vacancy': vacancy, 'found': 0, 'now': datetime.today().strftime("%d/%m/%Y"),
+            'requirement': req}  # передаем в html
 
     # находим код региона для последущего запроса
     if region != 'Москва':
