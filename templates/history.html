@@ -1,0 +1,16 @@
+{% set page = 'history' %}
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <form method="post">
+     <div class="form-group">
+     <select>
+        {% for item in req %}
+            <option>{{ item[1] }}</option>
+        {% endfor %}
+     </select>
+     </div>
+      <button type="submit" class="btn btn-primary">Поиск</button>
+    </form>
+{% endblock %}

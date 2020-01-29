@@ -7,7 +7,24 @@ DOMAIN = 'https://api.hh.ru/'
 URL_VACANCIES = f'{DOMAIN}vacancies'
 URL_AREA = f'{DOMAIN}suggests/areas'
 
-FILE_DB = 'modules\hhparser.db'
+FILE_DB = 'modules/hhparser.db'
+
+
+def get_history():
+    history_db = []
+    conn = sqlite3.connect(FILE_DB)
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM requests')
+    result = cursor.fetchall()
+    for item in result:
+        cursor.execute('SELECT Name FROM regions WHERE id =?', (str(item[2]),))
+        region = cursor.fetchall()
+        cursor.execute('SELECT Name FROM vacancies WHERE id =?', (str(item[3]),))
+        vacancy = cursor.fetchall()
+        history_db.append([item[0], f'Регион: {region[0][0]}, Вакансия: {vacancy[0][0]}, Дата: {item[1]}'])
+
+    conn.close()
+    return history_db
 
 
 def add_records(info):
@@ -101,4 +118,7 @@ def parser(vacancy='Python developer', region='Москва'):
 
     return info
 
-
+# if __name__ == '__main__':
+#    r= get_requests()
+#    print(r)
+#    print(r[1][2])
