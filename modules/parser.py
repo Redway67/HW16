@@ -15,11 +15,11 @@ def add_records(info):
     cursor = conn.cursor()
 
     cursor.execute('INSERT OR IGNORE INTO regions (Name) VALUES (?)', (info['region'],))
-    cursor.execute('SELECT last_insert_rowid()')
+    cursor.execute('SELECT id FROM regions WHERE Name =?', (info['region'],))
     id_region = cursor.fetchall()[0][0]
 
     cursor.execute('INSERT OR IGNORE INTO vacancies (Name) VALUES (?)', (info['vacancy'],))
-    cursor.execute('SELECT last_insert_rowid()')
+    cursor.execute('SELECT id FROM vacancies WHERE Name =?', (info['vacancy'],))
     id_vacancy = cursor.fetchall()[0][0]
 
     query_insert_request = 'INSERT INTO requests (Data,idRegion,idVacancy,Found) VALUES (?,?,?,?)'
@@ -31,7 +31,7 @@ def add_records(info):
     for skill in info['requirement']:
         # скилы
         cursor.execute('INSERT OR IGNORE INTO skills (Name) VALUES (?)', (skill['name'],))
-        cursor.execute('SELECT last_insert_rowid()')
+        cursor.execute('SELECT id FROM skills WHERE Name =?', (skill['name'],))
         id_skill = cursor.fetchall()[0][0]
         # реквест-скилы
         cursor.execute(query_insert, (id_request, id_skill, skill['count'], skill['percent'],))
@@ -100,3 +100,5 @@ def parser(vacancy='Python developer', region='Москва'):
         print('Ошибка поиска!')
 
     return info
+
+
