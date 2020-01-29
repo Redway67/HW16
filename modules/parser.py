@@ -1,10 +1,29 @@
 import requests
 import json
 from datetime import datetime
+import sqlite3
 
 DOMAIN = 'https://api.hh.ru/'
 URL_VACANCIES = f'{DOMAIN}vacancies'
 URL_AREA = f'{DOMAIN}suggests/areas'
+
+
+def open_db():
+    # Подключение к базе данных
+    conn = sqlite3.connect('hhparser.db')
+
+    # Создаем курсор
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT * from regions')
+
+    result = cursor.fetchall()
+    print(result)
+
+    for item in result:
+        print(item)
+        print(type(item))
+    return
 
 
 def parser(vacancy='Python developer', region='Москва'):
@@ -64,3 +83,7 @@ def parser(vacancy='Python developer', region='Москва'):
         print('Ошибка поиска!')
 
     return info
+
+
+if __name__ == '__main__':
+    open_db()
