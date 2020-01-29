@@ -36,6 +36,7 @@ def add_records(info):
         # реквест-скилы
         cursor.execute(query_insert, (id_request, id_skill, skill['count'], skill['percent'],))
 
+    print(id_region, id_vacancy, id_request, id_skill)
     conn.commit()
     conn.close()
     return
