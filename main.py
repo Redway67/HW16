@@ -26,7 +26,6 @@ def search():
 
 @app.route('/search/', methods=['POST'])
 def results():
-    # TODO : необходимо запоминать дату и время на которое сделан запрос, ситуация ао вакансиям может измениться
     info = parser(request.form['vacancy'], request.form['region'])
     return render_template('result.html', info=info)
 
