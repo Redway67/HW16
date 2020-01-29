@@ -7,7 +7,7 @@ DOMAIN = 'https://api.hh.ru/'
 URL_VACANCIES = f'{DOMAIN}vacancies'
 URL_AREA = f'{DOMAIN}suggests/areas'
 
-FILE_DB = 'hhparser.db'
+FILE_DB = 'modules\hhparser.db'
 
 
 def add_records(info):
@@ -15,23 +15,29 @@ def add_records(info):
     cursor = conn.cursor()
 
     cursor.execute('INSERT OR IGNORE INTO regions (Name) VALUES (?)', (info['region'],))
-    # id_region =
+    cursor.execute('SELECT last_insert_rowid()')
+    id_region = cursor.fetchall()[0][0]
+
     cursor.execute('INSERT OR IGNORE INTO vacancies (Name) VALUES (?)', (info['vacancy'],))
-    # id_vacancy =
+    cursor.execute('SELECT last_insert_rowid()')
+    id_vacancy = cursor.fetchall()[0][0]
 
-    query_insert_request = 'INSERT OR IGNORE INTO requests (Data,idRegion,idVacancy,Found) VALUES (?,?,?,?,?)'
+    query_insert_request = 'INSERT INTO requests (Data,idRegion,idVacancy,Found) VALUES (?,?,?,?)'
     cursor.execute(query_insert_request, (info['data'], id_region, id_vacancy, info['found'],))
-    # id_request =
+    cursor.execute('SELECT last_insert_rowid()')
+    id_request = cursor.fetchall()[0][0]
 
-    query_insert = 'INSERT OR IGNORE INTO request_skill (idRequest,idSkill,Count,Percent ) VALUES (?,?,?,?)'
+    query_insert = 'INSERT INTO request_skill (idRequest,idSkill,Count,Percent ) VALUES (?,?,?,?)'
     for skill in info['requirement']:
         # скилы
-        cursor.execute('INSERT OR IGNORE INTO skills (Name) VALUES (?)', (skill,))
-        # id_skill
+        cursor.execute('INSERT OR IGNORE INTO skills (Name) VALUES (?)', (skill['name'],))
+        cursor.execute('SELECT last_insert_rowid()')
+        id_skill = cursor.fetchall()[0][0]
         # реквест-скилы
-        cursor.execute(query_insert, (id_request, id_skill, skill['count'], skill['percent']))
+        cursor.execute(query_insert, (id_request, id_skill, skill['count'], skill['percent'],))
 
     conn.commit()
+    conn.close()
     return
 
 
@@ -84,7 +90,7 @@ def parser(vacancy='Python developer', region='Москва'):
 
             info['requirement'] = req
             # сохраняем в файл запрос и результат
-            # add_records(info)
+            add_records(info)
             with open('last_call.json', 'w', encoding='utf-8') as f:
                 json.dump(info, f, ensure_ascii=False)
         else:
@@ -93,7 +99,3 @@ def parser(vacancy='Python developer', region='Москва'):
         print('Ошибка поиска!')
 
     return info
-
-
-if __name__ == '__main__':
-    pass
