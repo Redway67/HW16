@@ -15,12 +15,21 @@ def add_records(info):
     cursor = conn.cursor()
 
     cursor.execute('INSERT OR IGNORE INTO regions (Name) VALUES (?)', (info['region'],))
+    # id_region =
     cursor.execute('INSERT OR IGNORE INTO vacancies (Name) VALUES (?)', (info['vacancy'],))
+    # id_vacancy =
 
+    query_insert_request = 'INSERT OR IGNORE INTO requests (Data,idRegion,idVacancy,Found) VALUES (?,?,?,?,?)'
+    cursor.execute(query_insert_request, (info['data'], id_region, id_vacancy, info['found'],))
+    # id_request =
+
+    query_insert = 'INSERT OR IGNORE INTO request_skill (idRequest,idSkill,Count,Percent ) VALUES (?,?,?,?)'
     for skill in info['requirement']:
+        # скилы
         cursor.execute('INSERT OR IGNORE INTO skills (Name) VALUES (?)', (skill,))
-
-    cursor.execute('INSERT OR IGNORE INTO requests (Data, Found) VALUES (?,?)', (info['data'], info['found'],))
+        # id_skill
+        # реквест-скилы
+        cursor.execute(query_insert, (id_request, id_skill, skill['count'], skill['percent']))
 
     conn.commit()
     return
