@@ -7,22 +7,22 @@ DOMAIN = 'https://api.hh.ru/'
 URL_VACANCIES = f'{DOMAIN}vacancies'
 URL_AREA = f'{DOMAIN}suggests/areas'
 
+FILE_DB = 'hhparser.db'
 
-def open_db():
-    # Подключение к базе данных
-    conn = sqlite3.connect('hhparser.db')
 
-    # Создаем курсор
+def add_records(info):
+    conn = sqlite3.connect(FILE_DB)
     cursor = conn.cursor()
 
-    cursor.execute('SELECT * from regions')
+    cursor.execute('INSERT OR IGNORE INTO regions (Name) VALUES (?)', (info['region'],))
+    cursor.execute('INSERT OR IGNORE INTO vacancies (Name) VALUES (?)', (info['vacancy'],))
 
-    result = cursor.fetchall()
-    print(result)
+    for skill in info['requirement']:
+        cursor.execute('INSERT OR IGNORE INTO skills (Name) VALUES (?)', (skill,))
 
-    for item in result:
-        print(item)
-        print(type(item))
+    cursor.execute('INSERT OR IGNORE INTO requests (Data, Found) VALUES (?,?)', (info['data'], info['found'],))
+
+    conn.commit()
     return
 
 
@@ -33,7 +33,7 @@ def parser(vacancy='Python developer', region='Москва'):
     qnt_skills = 0
     # по умолчанию info
     area = '1'  # код Москвы
-    info = {'region': region, 'vacancy': vacancy, 'found': 0, 'now': datetime.today().strftime("%d/%m/%Y"),
+    info = {'region': region, 'vacancy': vacancy, 'found': 0, 'data': datetime.today().strftime("%d/%m/%Y"),
             'requirement': req}  # передаем в html
 
     # находим код региона для последущего запроса
@@ -75,6 +75,7 @@ def parser(vacancy='Python developer', region='Москва'):
 
             info['requirement'] = req
             # сохраняем в файл запрос и результат
+            # add_records(info)
             with open('last_call.json', 'w', encoding='utf-8') as f:
                 json.dump(info, f, ensure_ascii=False)
         else:
@@ -86,4 +87,4 @@ def parser(vacancy='Python developer', region='Москва'):
 
 
 if __name__ == '__main__':
-    open_db()
+    pass
