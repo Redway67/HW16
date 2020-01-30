@@ -100,7 +100,6 @@ def parser(vacancy='Python developer', region='Москва'):
     area = '1'  # код Москвы
     info = {'region': region, 'vacancy': vacancy, 'found': 0, 'data': datetime.today().strftime("%d/%m/%Y"),
             'requirement': req}  # передаем в html
-
     # находим код региона для последущего запроса
     if region != 'Москва':
         params = {'text': f'{region}'}
