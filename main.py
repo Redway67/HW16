@@ -24,7 +24,7 @@ def history_result():
         info = get_request(v_request)
         return render_template('result.html', info=info)
     else:
-        # не выбран запрос!!
+        # не выбран запрос!!!
         history_db = get_history()
         return render_template('history.html', req=history_db, warning=1)
 
