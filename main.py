@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import json
 
-from modules.parser import parser, get_history
+from modules.parser import parser, get_history, get_request
 
 app = Flask(__name__)
 
@@ -21,8 +21,8 @@ def history():
 
 @app.route('/history/', methods=['POST'])
 def history_result():
-    print(request.form)
-    return render_template('result.html')
+    info = get_request(request.form['request'])
+    return render_template('result.html', info=info)
 
 
 @app.route('/search/', methods=['GET'])

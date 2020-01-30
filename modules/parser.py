@@ -12,23 +12,50 @@ FILE_DB = 'modules/hhparser.db'
 
 def get_history():
     history_db = []
-    conn = sqlite3.connect(FILE_DB)
+    conn = sqlite3.connect(FILE_DB, check_same_thread=False)
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM requests')
     result = cursor.fetchall()
+    # TODO: сортировка по региону?
     for item in result:
         cursor.execute('SELECT Name FROM regions WHERE id =?', (str(item[2]),))
         region = cursor.fetchall()
         cursor.execute('SELECT Name FROM vacancies WHERE id =?', (str(item[3]),))
         vacancy = cursor.fetchall()
-        history_db.append([item[0], f'Регион: {region[0][0]}, Вакансия: {vacancy[0][0]}, Дата: {item[1]}'])
+        history_db.append(
+            [item[0], f'Регион: {region[0][0]}, Вакансия: {vacancy[0][0]}, Найдено: {item[4]}, Дата: {item[1]}'])
 
     conn.close()
     return history_db
 
 
+def get_request(request):
+    r = request.replace(':', ',').split(',')
+    region = r[1]
+    vacancy = r[3]
+    found = r[5]
+    data = r[7]
+
+    conn = sqlite3.connect(FILE_DB, check_same_thread=False)
+    cursor = conn.cursor()
+
+    print(region, type(region))
+    cursor.execute('SELECT id FROM regions WHERE Name = ?', (region,))
+    # cursor.execute('SELECT * FROM regions WHERE Name = ?', (region,))
+    print(cursor.fetchall())
+    # id_region = cursor.fetchall()[0][0]
+    cursor.execute('SELECT id FROM vacancies WHERE Name =?', (vacancy,))
+    id_vacancy = cursor.fetchall()[0][0]
+    cursor.execute('SELECT id FROM requests WHERE Region =? AND Vacancy = ? AND Data = ?',
+                   (id_region, id_vacancy, data,))
+    print(cursor.fetchall())
+
+    info = {'region': region, 'vacancy': vacancy, 'found': found, 'data': data, 'requirement': req}
+    return info
+
+
 def add_records(info):
-    conn = sqlite3.connect(FILE_DB)
+    conn = sqlite3.connect(FILE_DB, check_same_thread=False)
     cursor = conn.cursor()
 
     cursor.execute('INSERT OR IGNORE INTO regions (Name) VALUES (?)', (info['region'],))
@@ -117,8 +144,3 @@ def parser(vacancy='Python developer', region='Москва'):
         print('Ошибка поиска!')
 
     return info
-
-# if __name__ == '__main__':
-#    r= get_requests()
-#    print(r)
-#    print(r[1][2])

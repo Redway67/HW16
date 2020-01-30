@@ -4,13 +4,14 @@
 
 {% block content %}
     <form method="post">
+      <h3> Выберите запрос </h3>
      <div class="form-group">
-     <select>
+     <p><select size="3" name="request">
         {% for item in req %}
             <option>{{ item[1] }}</option>
         {% endfor %}
-     </select>
+     </select></p>
+     <button type="submit" class="btn btn-primary">Поиск</button>
      </div>
-      <button type="submit" class="btn btn-primary">Поиск</button>
     </form>
 {% endblock %}
