@@ -30,27 +30,34 @@ def get_history():
 
 
 def get_request(request):
+    # TODO: обработка пустого запроса
     r = request.replace(':', ',').split(',')
-    region = r[1]
-    vacancy = r[3]
-    found = r[5]
-    data = r[7]
+    region = r[1].split()[0]
+    vacancy = r[3].split()[0]
+    found = r[5].split()[0]
+    data = r[7].split()[0]
 
     conn = sqlite3.connect(FILE_DB, check_same_thread=False)
     cursor = conn.cursor()
 
-    print(region, type(region))
     cursor.execute('SELECT id FROM regions WHERE Name = ?', (region,))
-    # cursor.execute('SELECT * FROM regions WHERE Name = ?', (region,))
-    print(cursor.fetchall())
-    # id_region = cursor.fetchall()[0][0]
+    id_region = cursor.fetchall()[0][0]
     cursor.execute('SELECT id FROM vacancies WHERE Name =?', (vacancy,))
     id_vacancy = cursor.fetchall()[0][0]
-    cursor.execute('SELECT id FROM requests WHERE Region =? AND Vacancy = ? AND Data = ?',
+    cursor.execute('SELECT id FROM requests WHERE idRegion =? AND idVacancy = ? AND Data = ?',
                    (id_region, id_vacancy, data,))
-    print(cursor.fetchall())
+    id_request = cursor.fetchall()[0][0]
+    cursor.execute('SELECT * FROM request_skill WHERE idRequest =?', (id_request,))
+    skills = cursor.fetchall()
+    req = []
+    for skill in skills:
+        print(skill[1], skill[2], skill[3])
+        cursor.execute('SELECT Name FROM skills WHERE id =?', (str(skill[1]),))
+        name = cursor.fetchall()[0][0]
+        req.append({'name': name, 'count': skill[2], 'percent': skill[3]})
 
     info = {'region': region, 'vacancy': vacancy, 'found': found, 'data': data, 'requirement': req}
+    conn.close()
     return info
 
 
@@ -80,7 +87,6 @@ def add_records(info):
         # реквест-скилы
         cursor.execute(query_insert, (id_request, id_skill, skill['count'], skill['percent'],))
 
-    print(id_region, id_vacancy, id_request, id_skill)
     conn.commit()
     conn.close()
     return
