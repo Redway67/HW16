@@ -6,7 +6,7 @@
     <form method="post">
       <h3> Выберите запрос </h3>
      <div class="form-group">
-     <p><select size="3" name="request">
+     <p><select size="10" name="request">
         {% for item in req %}
             <option>{{ item[1] }}</option>
         {% endfor %}
@@ -14,4 +14,7 @@
      <button type="submit" class="btn btn-primary">Поиск</button>
      </div>
     </form>
+    {% if warning %}
+       <h3> Выберите запрос !! </h3>
+    {% endif %}
 {% endblock %}

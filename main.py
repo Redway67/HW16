@@ -13,22 +13,24 @@ def index():
 
 @app.route('/history/', methods=['GET'])
 def history():
-    if request.method == 'POST':
-        print('POST')
     history_db = get_history()
-    return render_template('history.html', req=history_db)
+    return render_template('history.html', req=history_db, warning=0)
 
 
 @app.route('/history/', methods=['POST'])
 def history_result():
-    info = get_request(request.form['request'])
-    return render_template('result.html', info=info)
+    v_request = request.form.get('request')
+    if v_request:
+        info = get_request(v_request)
+        return render_template('result.html', info=info)
+    else:
+        # не выбран запрос!!
+        history_db = get_history()
+        return render_template('history.html', req=history_db, warning=1)
 
 
 @app.route('/search/', methods=['GET'])
 def search():
-    if request.method == 'POST':
-        print('POST')
     return render_template('search.html')
 
 

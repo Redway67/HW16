@@ -51,7 +51,6 @@ def get_request(request):
     skills = cursor.fetchall()
     req = []
     for skill in skills:
-        print(skill[1], skill[2], skill[3])
         cursor.execute('SELECT Name FROM skills WHERE id =?', (str(skill[1]),))
         name = cursor.fetchall()[0][0]
         req.append({'name': name, 'count': skill[2], 'percent': skill[3]})
