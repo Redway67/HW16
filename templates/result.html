@@ -3,13 +3,13 @@
 
 
 {% block content %}
-    <h3> Поиск </h3>
+    <h3> Последний поиск </h3>
     <h6> Регион   :</h6> <h> {{info.region}} </h>
 <br/>
     <h6> Вакансия :</h6> <h> {{info.vacancy}}</h>
 <br/><br/>
-    <h3> Найдено  </h3>
-    <h6> {{info.count}}</h6>
+    <h5> Найдено  на {{info.data}}</h5>
+    <h6> {{info.found}}</h6>
 
 <br/> <br/>
     {% if info.requirement %}
